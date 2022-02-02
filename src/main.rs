@@ -1,26 +1,21 @@
 use reqwest;
-use serde::{Deserialize, Serialize};
 use exitfailure::ExitFailure;
-use std::collections::HashMap;
+use std::env;
+
+mod domain {
+  pub mod coin;
+}
 
 #[tokio::main]
 async fn main() -> Result<(), ExitFailure> {
-  let url = format!("https://api.coingecko.com/api/v3/coins/{id}", id = "smooth-love-potion");
-  let result = reqwest::get(url).await.unwrap().json::<Coin>().await;
+  let mut args = env::args();
+  let coin_id = args.nth(1).unwrap_or_else(|| "smooth-love-potion".to_string());
+  let currency = args.nth(0).unwrap_or_else(|| "php".to_string());
 
-  println!("{:?}", result);
+  let url = format!("https://api.coingecko.com/api/v3/coins/{id}", id = coin_id);
+  let result = reqwest::get(url).await.unwrap().json::<domain::coin::Coin>().await.unwrap();
+
+  println!("Current Price: {:?}", result.market_data.current_price[&currency]);
   return Ok(());
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Coin {
-  id: String,
-  symbol: String,
-  name: String,
-  market_data: MarketData,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct MarketData {
-  current_price: HashMap<String, f32>
-}
