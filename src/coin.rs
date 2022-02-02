@@ -1,5 +1,16 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap};
+use exitfailure::ExitFailure;
+use reqwest;
+
+impl Coin {
+  pub async fn fetch(coin: &String) -> Result<Self, ExitFailure> {
+    let url = format!("https://api.coingecko.com/api/v3/coins/{id}", id = coin);
+    let result = reqwest::get(url).await.unwrap().json::<Coin>().await.unwrap();
+
+    return Ok(result);
+  }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Coin {
@@ -14,7 +25,16 @@ pub struct Coin {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MarketData {
-  pub current_price: HashMap<String, f32>
+  pub current_price: HashMap<String, f32>,
+  pub ath: HashMap<String, f32>,
+  pub ath_change_percentage: HashMap<String, i32>,
+  pub atl: HashMap<String, f32>,
+  pub atl_change_percentage: HashMap<String, i32>,
+  pub market_cap: HashMap<String, i32>,
+  pub market_cap_rank: i32,
+  pub high_24h: HashMap<String, f32>,
+  pub low_24h: HashMap<String, f32>,
+  pub price_change_24h: i32,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
