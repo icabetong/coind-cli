@@ -27,14 +27,14 @@ pub struct Coin {
 pub struct MarketData {
   pub current_price: HashMap<String, f32>,
   pub ath: HashMap<String, f32>,
-  pub ath_change_percentage: HashMap<String, i32>,
+  pub ath_change_percentage: HashMap<String, f32>,
   pub atl: HashMap<String, f32>,
-  pub atl_change_percentage: HashMap<String, i32>,
-  pub market_cap: HashMap<String, i32>,
-  pub market_cap_rank: i32,
+  pub atl_change_percentage: HashMap<String, f32>,
+  pub market_cap: HashMap<String, f32>,
+  pub market_cap_rank: f32,
   pub high_24h: HashMap<String, f32>,
   pub low_24h: HashMap<String, f32>,
-  pub price_change_24h: i32,
+  pub price_change_24h: f32,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
