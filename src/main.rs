@@ -1,6 +1,7 @@
 use exitfailure::ExitFailure;
 use std::env;
 use colored::*;
+use requestty::{Question, Answer};
 //use spinners::{Spinner, Spinners};
 
 mod coin;
@@ -14,17 +15,33 @@ async fn main() -> Result<(), ExitFailure> {
   let currency = args.nth(0);
 
   if coin_id.is_none() {
-    let mut id = String::new();
-    let mut money = String::new();
+    let question = Question::select("home")
+      .message("What would you want to do?")
+      .choices(vec![
+        "Check what's trending",
+        "Check a coin's current data"
+      ]).build();
+  
 
-    println!("Enter coin id: ");
-    std::io::stdin().read_line(&mut id).unwrap();
-    println!("{}", id);
-    println!("Enter currency: ");
-    std::io::stdin().read_line(&mut money).unwrap();
+    let result: Answer = requestty::prompt_one(question).unwrap();
+    println!("{:?}", result.as_list_item());
+    match result.as_list_item().unwrap().index {
+      0 => {
 
-    fetch_money(&id, &money).await;
-
+      },
+      1 => {
+        let mut id = String::new();
+        let mut money = String::new();
+    
+        println!("Enter coin id: ");
+        std::io::stdin().read_line(&mut id).unwrap();
+        println!("Enter currency: ");
+        std::io::stdin().read_line(&mut money).unwrap();
+    
+        fetch_money(&id, &money).await;
+      },
+      _ => println!("Invalid")
+    }
   } else {
     let mut money: String = String::from("php");
     if currency.is_some() {
@@ -48,5 +65,5 @@ async fn fetch_money(id: &String, currency: &String) {
 
   println!("Name: {}", coin.name.cyan().bold());
   println!("Symbol: {}", coin.symbol.cyan().bold());
-  println!("Current Price: {} {}", currency.to_uppercase().cyan(), coin.market_data.current_price[currency].to_string().cyan().bold());
+  println!("Current Price: {} {}", currency.trim().to_uppercase().cyan(), coin.market_data.current_price[currency.trim()].to_string().cyan().bold());
 }
