@@ -50,3 +50,32 @@ pub struct Links {
   telegram_channel_identifier: Option<String>,
   subreddit_url: Option<String>
 }
+
+impl Trending {
+  pub async fn fetch() -> Result<Trending, ExitFailure> {
+    let url = "https://api.coingecko.com/api/v3/search/trending";
+    let result = reqwest::get(url).await.unwrap().json::<Trending>().await.unwrap();
+
+    return Ok(result);
+  }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Trending {
+  pub coins: Vec<CoinTrending>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CoinTrending {
+  pub item: Item
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Item {
+  pub id: String,
+  pub name: String,
+  pub symbol: String,
+  pub market_cap_rank: i32,
+  pub price_btc: f32,
+  pub score: i32
+}

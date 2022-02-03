@@ -24,10 +24,17 @@ async fn main() -> Result<(), ExitFailure> {
   
 
     let result: Answer = requestty::prompt_one(question).unwrap();
-    println!("{:?}", result.as_list_item());
     match result.as_list_item().unwrap().index {
       0 => {
-
+        let items = coin::Trending::fetch().await.unwrap();
+        println!("{}\n", "Trending Coins".yellow().bold());
+        
+        for trending in items.coins {
+          println!("Name: {}", trending.item.name.cyan().bold());
+          println!("Symbol: {}", trending.item.symbol.cyan().bold());
+          println!("Bitcoin Price: {}", trending.item.price_btc.to_string().cyan().bold());
+          println!("Market Cap Rank: {}\n", trending.item.market_cap_rank.to_string().cyan().bold());
+        }
       },
       1 => {
         let mut id = String::new();
